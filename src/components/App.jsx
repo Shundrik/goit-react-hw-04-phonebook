@@ -1,10 +1,11 @@
-import { Phonebook } from "./Phonebook/Phonebook";
+import { NewPhonebook } from "./NewPhonebook/NewPhonebook";
+// import { Phonebook } from "./Phonebook/Phonebook";
 
 export const App = () => {
   return (
     <div>
-
-      <Phonebook/>
+<NewPhonebook/>
+      {/* <Phonebook/> */}
      
     </div>
   );
