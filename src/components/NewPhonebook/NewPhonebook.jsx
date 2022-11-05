@@ -1,9 +1,19 @@
 import { nanoid } from 'nanoid';
 import React from 'react';
+import styled from 'styled-components';
 import { ContactList } from './ContactList/ContactList';
 import { ContactsEditor } from './ContactsEditor/ContactsEditor';
 import { Filter } from './Filter/Filter';
 
+
+const ContactCounter = styled.p`
+margin:10px auto;
+  width: 100px;
+  text-align: center;
+`
+const Title = styled.h1`
+  text-align: center;
+`
 export class NewPhonebook extends React.Component {
   state = {
     contacts: [
@@ -61,10 +71,12 @@ export class NewPhonebook extends React.Component {
     return (
       <>
         <div>
-          <span>total name: {contacts.length}</span>
+          <ContactCounter>
+                Phonebook <br /> <span>{contacts.length}</span> contacts
+          </ContactCounter>
         </div>
         <ContactsEditor onSubmit={this.addContact} />
-        <h1>Contacts</h1>
+        <Title>Contacts</Title>
 
         <Filter onChange={this.handleFilter} value={filter}></Filter>
 
