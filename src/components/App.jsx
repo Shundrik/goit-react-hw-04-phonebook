@@ -5,7 +5,6 @@ export const App = () => {
   return (
     <div>
 <NewPhonebook/>
-      {/* <Phonebook/> */}
      
     </div>
   );
