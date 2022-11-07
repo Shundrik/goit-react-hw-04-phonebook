@@ -5,7 +5,7 @@ import { ContactList } from './ContactList/ContactList';
 import { ContactsEditor } from './ContactsEditor/ContactsEditor';
 import { Filter } from './Filter/Filter';
 
-
+const LS_KEY = "contacts"
 const ContactCounter = styled.p`
 margin:10px auto;
   width: 100px;
@@ -42,19 +42,39 @@ export class NewPhonebook extends React.Component {
         }));
   };
 
+
+  componentDidUpdate(){
+   localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts)) 
+
+  }
+
+componentDidMount(){
+  const contactsFromLs = localStorage.getItem(LS_KEY)
+
+  if(contactsFromLs){
+this.setState({
+  contacts:JSON.parse(contactsFromLs)
+})
+  }
+  // return this.state.contacts
+}
+
+
+
+
   contactFilter = () => {
     const normalized = this.state.filter.toLowerCase();
-    console.log(normalized);
+    // console.log(normalized);
 
     const resultFilter = this.state.contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalized)
     );
-    console.log(resultFilter);
+    // console.log(resultFilter);
     return resultFilter;
   };
 
   handleFilter = e => {
-    console.log(e.currentTarget.value);
+    // console.log(e.currentTarget.value);
     this.setState({ filter: e.currentTarget.value });
   };
 
@@ -66,7 +86,7 @@ export class NewPhonebook extends React.Component {
 
   render() {
     const visibleContact = this.contactFilter();
-    console.log(visibleContact);
+    // console.log(visibleContact);
     const { contacts, filter } = this.state;
     return (
       <>
