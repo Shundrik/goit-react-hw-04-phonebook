@@ -1,11 +1,9 @@
-
-import styled from "styled-components";
-
+import styled from 'styled-components';
 
 const WrapperFindForm = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-`
+  display: flex;
+  justify-content: space-evenly;
+`;
 
 const Formlabel = styled.label`
   margin: 5px;

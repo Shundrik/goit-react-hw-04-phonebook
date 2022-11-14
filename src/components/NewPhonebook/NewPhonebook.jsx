@@ -1,110 +1,98 @@
 import { nanoid } from 'nanoid';
-import React from 'react';
+import { useEffect } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { ContactList } from './ContactList/ContactList';
 import { ContactsEditor } from './ContactsEditor/ContactsEditor';
 import { Filter } from './Filter/Filter';
 
-const LS_KEY = "contacts"
+const LS_KEY = 'contacts';
 const ContactCounter = styled.p`
-margin:10px auto;
+  margin: 10px auto;
   width: 100px;
   text-align: center;
-`
+`;
 const Title = styled.h1`
   text-align: center;
-`
-export class NewPhonebook extends React.Component {
-  state = {
-    contacts: [
+`;
+
+const getLs = () => {
+  const contactsFromLs = window.localStorage.getItem(LS_KEY);
+
+  if (contactsFromLs) {
+    return JSON.parse(contactsFromLs);
+  }
+};
+
+export const NewPhonebook = () => {
+  const [contacts, setContacts] = useState(
+    getLs() ?? [
       { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
       { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
       { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
-    filter: '',
-    // name: '',
-    // number: '',
-  };
+    ]
+  );
 
-  addContact = ({ name, number }) => {
+  const [filter, setFilter] = useState('');
+
+  const addContact = ({ name, number }) => {
     const id = nanoid();
     const newObject = { id, name, number };
     console.log(newObject);
-    const inList = this.state.contacts.find(
+    console.log(contacts);
+    const inList = contacts.find(
       contact => contact.name === newObject.name
+      // console.log(contact.name === newObject.name)
     );
-
     inList
       ? alert(`${newObject.name} is alrady in contacts`)
-      : this.setState(prevState => ({
-          contacts: [newObject, ...prevState.contacts],
-        }));
+      : setContacts(prevState => [newObject, ...prevState]);
   };
 
+  useEffect(() => {
+    window.localStorage.setItem(LS_KEY, JSON.stringify(contacts));
+  }, [contacts]);
 
-  componentDidUpdate(){
-   localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts)) 
+  useEffect(() => {
+    const contactsFromLs = window.localStorage.getItem(LS_KEY);
+    console.log(contactsFromLs);
+    if (contactsFromLs) {
+      setContacts(JSON.parse(contactsFromLs));
+    }
+  }, []);
 
-  }
-
-componentDidMount(){
-  const contactsFromLs = localStorage.getItem(LS_KEY)
-
-  if(contactsFromLs){
-this.setState({
-  contacts:JSON.parse(contactsFromLs)
-})
-  }
-  // return this.state.contacts
-}
-
-
-
-
-  contactFilter = () => {
-    const normalized = this.state.filter.toLowerCase();
-    // console.log(normalized);
-
-    const resultFilter = this.state.contacts.filter(contact =>
+  const contactFilter = () => {
+    const normalized = filter.toLowerCase();
+    const resultFilter = contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalized)
     );
-    // console.log(resultFilter);
     return resultFilter;
   };
 
-  handleFilter = e => {
-    // console.log(e.currentTarget.value);
-    this.setState({ filter: e.currentTarget.value });
+  const deleteContact = contactId => {
+    console.log(contactId);
+    setContacts(contacts.filter(contact => contact.id !== contactId));
   };
 
-  deleteContact = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
-  };
+  const visibleContact = contactFilter();
 
-  render() {
-    const visibleContact = this.contactFilter();
-    // console.log(visibleContact);
-    const { contacts, filter } = this.state;
-    return (
-      <>
-        <div>
-          <ContactCounter>
-                Phonebook <br /> <span>{contacts.length}</span> contacts
-          </ContactCounter>
-        </div>
-        <ContactsEditor onSubmit={this.addContact} />
-        <Title>Contacts</Title>
+  return (
+    <>
+      <div>
+        <ContactCounter>
+          Phonebook <br /> <span>{contacts.length}</span> contacts
+        </ContactCounter>
+      </div>
+      <ContactsEditor onSubmit={addContact} />
+      <Title>Contacts</Title>
 
-        <Filter onChange={this.handleFilter} value={filter}></Filter>
+      <Filter onChange={e => setFilter(e.target.value)} value={filter}></Filter>
 
-        <ContactList
-          contacts={visibleContact}
-          onDeliteContact={this.deleteContact}
-        ></ContactList>
-      </>
-    );
-  }
-}
+      <ContactList
+        contacts={visibleContact}
+        onDeliteContact={deleteContact}
+      ></ContactList>
+    </>
+  );
+};
